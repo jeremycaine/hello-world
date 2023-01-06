@@ -50,22 +50,11 @@ oc get is
 
 # allows the imagestream to be the source of images without having to provide the full URL to the internal registry.
 oc set image-lookup hello-world
-oc run demo --image=hello-world 
 ```
 
-Now as developer, deploy the image
-```
-oc login -u developer ...
+## x. Quay and Red Hat OpenShift IBM Cloud
 
-```
-
-### 3.2. Build and Deploy from Source
-
-
-curl -kv https://default-route-openshift-image-registry.apps-crc.testing
-
-
-## x. Push to Quay and Test in Red Hat OpenShift on IBM Cloud
+### x.1 Build and Push to Quay Registry
 Build to the amd64 architecture for deployment in the cloud.
 ```
 podman build --arch=amd64 -t hello-world:amd64 .
@@ -74,25 +63,22 @@ podman login quay.io
 podman push hello-world:amd64 quay.io/jeremycaine/hello-world:amd64
 ```
 
-### x.1 Build from Source
+### x.2 Deployment
+Log in to OpenShift on cloud and two deployment options
 ```
 oc login --token...
 oc new-project caine
+
+# build from source
 oc new-app https://github.com/jeremycaine/hello-world
-oc expose service/hello-world
 
-# get URL of deployment from
-oc status
-```
-
-### x.1 Build from Image
-```
-oc login --token...
-oc new-project caine
+# build from image
 oc new-app --image=quay.io/jeremycaine/hello-world:amd64
+
 oc expose service/hello-world
 
 # get URL of deployment from
 oc status
 ```
+
 
