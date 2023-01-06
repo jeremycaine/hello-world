@@ -65,7 +65,7 @@ oc login -u developer ...
 curl -kv https://default-route-openshift-image-registry.apps-crc.testing
 
 
-## x. Push to Quay and Test in Public Cloud
+## x. Push to Quay and Test in Red Hat OpenShift on IBM Cloud
 Build to the amd64 architecture for deployment in the cloud.
 ```
 podman build --arch=amd64 -t hello-world:amd64 .
@@ -75,12 +75,24 @@ podman push hello-world:amd64 quay.io/jeremycaine/hello-world:amd64
 ```
 
 ### x.1 Build from Source
-Red Hat OpenShift on IBM Cloud
 ```
 oc login --token...
-oc new-project caine https://github.com/jeremycaine/hello-world
+oc new-project caine
+oc new-app https://github.com/jeremycaine/hello-world
 oc expose service/hello-world
 
 # get URL of deployment from
 oc status
 ```
+
+### x.1 Build from Image
+```
+oc login --token...
+oc new-project caine
+oc new-app --image=quay.io/jeremycaine/hello-world:amd64
+oc expose service/hello-world
+
+# get URL of deployment from
+oc status
+```
+
