@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/jeremycaine/hello-world/issues"
   },
-  "homepage": "https://github.com/jeremycaine/hello-world#readme"
+  "homepage": "https://github.com/jeremycaine/hello-world#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }

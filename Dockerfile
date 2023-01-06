@@ -1,35 +1,13 @@
-# First stage builds the application
-#FROM ubi8/nodejs-16 as builder
+FROM node:16
 
-#USER 1001
+# Install dependencies first, add code later: docker is caching by layers
+COPY package.json ./
 
-# Add application sources
-#ADD . $HOME
+# Docker base image is already NODE_ENV=production
+RUN npm install
 
-# Install the dependencies
-#RUN npm install
-
-# Second stage copies the application to the minimal image
-#FROM ubi8/nodejs-16-minimal
-
-# Copy the application source and build artifacts from the builder image to this one
-#COPY --from=builder $HOME $HOME
-
-# Run script uses standard ways to run the application
-#EXPOSE 3000
-
-#CMD [ "npm", "run", "start" ]
-#CMD npm run -d start
-
-
-FROM registry.access.redhat.com/ubi8/nodejs-18-minimal:1
-
-CMD sudo chown -R 1001:0 "/opt/app-root/src"
-WORKDIR /opt/app-root/src
-
-COPY package.json /opt/app-root/src
-RUN npm install --only=prod
-COPY . /opt/app-root/src
+# Add your source files
+COPY . .
 
 ENV NODE_ENV production
 ENV PORT 3000
