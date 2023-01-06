@@ -74,9 +74,13 @@ podman login quay.io
 podman push hello-world:amd64 quay.io/jeremycaine/hello-world:amd64
 ```
 
+### x.1 Build from Source
 Red Hat OpenShift on IBM Cloud
 ```
 oc login --token...
-oc new-project caine
+oc new-project caine https://github.com/jeremycaine/hello-world
+oc expose service/hello-world
 
+# get URL of deployment from
+oc status
 ```
