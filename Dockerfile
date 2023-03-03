@@ -58,8 +58,6 @@ LABEL summary="$SUMMARY" \
 #    microdnf clean all  && \
 #    rm -rf /mnt/rootfs/var/cache/* /mnt/rootfs/var/log/dnf* /mnt/rootfs/var/log/yum.*
 
-RUN npm install 
-
 COPY ./s2i/bin/ /usr/libexec/s2i
 
 # Copy extra files to the image.
@@ -73,6 +71,7 @@ USER 1001
 # Install dependencies first, as they change less often than code.
 #COPY package.json package-lock.json* ./
 #RUN npm ci && npm cache clean --force
+RUN npm install 
 COPY . .
 
 ENV NODE_ENV production
