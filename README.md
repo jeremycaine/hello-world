@@ -11,9 +11,9 @@ curl http://127.0.0.1:3000/
 ```
 
 ## 2. Local Podman
-Build and Run
+Build and Run on a Macbook M1 - arm64 architecture. The podman build picks up on the compute it is running on, so no need to add an `--arch` flag for `arm64`
 ```
-podman build -t hello-world .
+podman build -t hello-world:arm64 .
 podman images
 podman run --name hello -p 3001:3000 localhost/hello-world
 ```
@@ -35,17 +35,17 @@ podman rmi hello-word
 Set up OpenShift Local (was CRC).
 
 ### 3.1 Deploy from Image
-Log in to OpenShift as a developer
+Log in to OpenShift as admin
 ```
 eval $(crc oc-env)
-oc login -u developer https://api.crc.testing:6443
-oc whoami
+crc console --credentials
+oc login -u kubeadmin -p ...
 ```
 
 Log podman into the OpenShift Local registry.
 ```
 podman login -u kubeadmin -p $(oc whoami -t) default-route-openshift-image-registry.apps-crc.testing --tls-verify=false
-podman push hello-world default-route-openshift-image-registry.apps-crc.testing/hello-world --tls-verify=false
+podman push hello-world:arm64 default-route-openshift-image-registry.apps-crc.testing/hello-world --tls-verify=false
 oc get is
 
 # allows the imagestream to be the source of images without having to provide the full URL to the internal registry.
@@ -81,4 +81,9 @@ oc expose service/hello-world
 oc status
 ```
 
+## References
+
+https://developer.ibm.com/tutorials/running-x86-64-containers-mac-silicon-m1/ 
+
+https://podman-desktop.io/docs/troubleshooting#unable-to-set-custom-binary-path-for-podman-on-macos 
 
