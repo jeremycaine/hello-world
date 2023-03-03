@@ -2,7 +2,7 @@
 FROM ubi8/nodejs-16 as builder
 
 # Add application sources
-ADD app-src $HOME
+ADD . $HOME
 
 # Install the dependencies
 RUN npm install
