@@ -55,8 +55,9 @@ RUN INSTALL_PKGS="nodejs nodejs-nodemon nodejs-full-i18n npm findutils tar" && \
     microdnf module enable nodejs:$NODEJS_VERSION && \
     microdnf --nodocs --setopt=install_weak_deps=0 install $INSTALL_PKGS && \
     node -v | grep -qe "^v$NODEJS_VERSION\." && echo "Found VERSION $NODEJS_VERSION" && \
-    microdnf clean all && \
-    rm -rf /mnt/rootfs/var/cache/* /mnt/rootfs/var/log/dnf* /mnt/rootfs/var/log/yum.*
+    microdnf clean all 
+# && \
+RUN rm -rf /mnt/rootfs/var/cache/* /mnt/rootfs/var/log/dnf* /mnt/rootfs/var/log/yum.*
 
 COPY ./s2i/bin/ /usr/libexec/s2i
 
