@@ -1,5 +1,5 @@
 # First stage builds the application
-FROM ubi8/nodejs-16 as builder
+FROM registry.access.redhat.com/ubi8/nodejs-16 as builder
 
 # Add application sources
 ADD . $HOME
