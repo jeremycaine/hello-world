@@ -3,10 +3,12 @@ FROM ubi8/nodejs-16 as builder
 
 # Add application sources
 ADD . $HOME
-RUN rm $HOME/package-lock.json
 
 # Install the dependencies
 RUN npm install -g npm@9.6.0
+##solid
+##RUN npm ci --unsafe-perm && npm run build
+
 
 # Second stage copies the application to the minimal image
 FROM ubi8/nodejs-16-minimal
