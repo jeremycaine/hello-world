@@ -24,7 +24,7 @@ RUN \
 
 
 # Second stage copies the application to the minimal image
-FROM registry.redhat.io//ubi8/nodejs-16-minimal
+FROM registry.redhat.io/ubi8/nodejs-16-minimal
 
 USER 0
 WORKDIR $HOME
