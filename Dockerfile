@@ -1,5 +1,5 @@
 # First stage builds the application
-FROM ubi8/nodejs-16 as builder
+FROM nodejs:16-ubi9 as builder
 # registry.redhat.io/
 # registry.access.redhat.com/
 
@@ -28,7 +28,8 @@ RUN \
 
 
 # Second stage copies the application to the minimal image
-FROM ubi8/nodejs-16-minimal
+FROM nodejs:16-ubi9
+#FROM ubi8/nodejs-16-minimal
 
 USER 1001
 
