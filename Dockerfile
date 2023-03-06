@@ -2,8 +2,11 @@
 FROM registry.redhat.io/ubi8/nodejs-16 as builder
 # registry.access.redhat.com/
 
-USER 0
-WORKDIR $HOME
+RUN chgrp -R 0 $HOME && \
+    chmod -R g=u $HOME
+
+USER 1001
+RUN chown -R 1001:0 $HOME
 
 # Add application sources
 ADD . $HOME
@@ -26,8 +29,7 @@ RUN \
 # Second stage copies the application to the minimal image
 FROM registry.redhat.io/ubi8/nodejs-16-minimal
 
-USER 0
-WORKDIR $HOME
+USER 1001
 
 # Copy the application source and build artifacts from the builder image to this one
 COPY --from=builder $HOME $HOME
