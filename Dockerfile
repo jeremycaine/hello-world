@@ -1,8 +1,5 @@
 # First stage builds the application
-#FROM nodejs:16-ubi9 as builder
 FROM ubi9/nodejs-16
-# registry.redhat.io/
-# registry.access.redhat.com/
 
 RUN chgrp -R 0 $HOME && \
     chmod -R g=u $HOME
@@ -22,16 +19,8 @@ RUN \
   else echo "Lockfile not found." && exit 1; \
   fi
 
-# Install the dependencies
-# RUN npm install -g npm@9.6.0
-##solid
-##RUN npm ci --unsafe-perm && npm run build
-
-
 # Second stage copies the application to the minimal image
 FROM ubi9/nodejs-16-minimal
-#FROM nodejs:16-ubi9-minimal
-#FROM ubi8/nodejs-16-minimal
 
 USER 1001
 

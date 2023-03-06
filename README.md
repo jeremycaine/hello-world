@@ -67,7 +67,7 @@ podman push hello-world:amd64 quay.io/jeremycaine/hello-world:amd64
 Log in to OpenShift on cloud and two deployment options
 ```
 oc login --token...
-oc new-project caine
+oc new-project hello
 
 # build from source
 oc new-app https://github.com/jeremycaine/hello-world
