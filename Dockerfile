@@ -1,5 +1,6 @@
 # First stage builds the application
-FROM registry.redhat.io/ubi8/nodejs-16 as builder
+FROM ubi8/nodejs-16 as builder
+# registry.redhat.io/
 # registry.access.redhat.com/
 
 RUN chgrp -R 0 $HOME && \
@@ -27,7 +28,7 @@ RUN \
 
 
 # Second stage copies the application to the minimal image
-FROM registry.redhat.io/ubi8/nodejs-16-minimal
+FROM ubi8/nodejs-16-minimal
 
 USER 1001
 
