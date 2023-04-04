@@ -1,13 +1,25 @@
 const express = require("express")
+const app = express();
 
-const server = express()
+const PORT = process.env.PORT || 3000;
 
-server.get("/", (req, res) => {
-  res.send("Hello World!")
+app.get("/", (req, res) => {
+  res.send("Hello World!\n");
 })
 
-const PORT = process.env.PORT || 3000
-
-server.listen(PORT, () =>
+const server = app.listen(PORT, () =>
   console.log(`Server is running on http://localhost:${PORT}`)
-)
+);
+
+function shutdown(signal) {
+  console.log(`${signal} signal received`);
+  server.close();
+  console.log('HTTP server closed');
+  console.log('hello-world app shutting down');
+  process.exit();
+}
+
+//process.on('SIGINT', shutdown);
+//process.on('SIGTERM', shutdown);
+
+// https://thomashunter.name/posts/2021-03-08-the-death-of-a-nodejs-process
