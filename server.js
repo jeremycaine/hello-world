@@ -2,20 +2,22 @@ const express = require("express")
 const app = express();
 
 const PORT = process.env.PORT || 3000;
+const release = "1";
 
-app.get("/conrad", (req, res) => {
-  res.send("Hello World -- 1\n");
+app.get("/", (req, res) => {
+  console.log(`called hello - release ${release}\n`);
+  res.send(`Hello World ! (release ${release})\n`);
 })
 
 const server = app.listen(PORT, () =>
-  console.log(`Server is running on http://localhost:${PORT}`)
+  console.log(`Server release ${release} is running on http://localhost:${PORT}`)
 );
 
 function shutdown(signal) {
   console.log(`${signal} signal received`);
   server.close();
   console.log('HTTP server closed');
-  console.log('hello-world app shutting down');
+  console.log(`hello-world app release ${release} shutting down`);
   process.exit();
 }
 
