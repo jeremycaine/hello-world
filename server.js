@@ -2,7 +2,7 @@ const express = require("express")
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-const release = "1";
+const release = "2";
 
 app.get("/", (req, res) => {
   console.log(`called hello - release ${release}\n`);
@@ -21,7 +21,7 @@ function shutdown(signal) {
   process.exit();
 }
 
-//process.on('SIGINT', shutdown);
-//process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
 
 // https://thomashunter.name/posts/2021-03-08-the-death-of-a-nodejs-process
