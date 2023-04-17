@@ -10,11 +10,11 @@ metadata:
     openshift.io/long-description: This template defines resources needed to develop
       a basic Hello World NodeJS application, including a build configuration and
       application deployment configuration.  It does not include a database.
-    openshift.io/provider-display-name: cg2p
-    openshift.io/documentation-url: https://github.com/jeremycaine/hello-world
-    openshift.io/support-url: https://github.com/jeremycaine
+    openshift.io/provider-display-name: jeremycaine
+    openshift.io/documentation-url: "${SOURCE_REPOSITORY_URL}"
+    openshift.io/support-url: "${SUPPORT_REPOSITORY_URL}"
     template.openshift.io/bindable: 'false'
-message: "The following service(s) have been created in your project: ${PROJECT}.\n\n"
+message: "The following service(s) have been created in your project: ${NAMESPACE}.\n\n"
 labels:
   template: "${NAME}"
   app: "${NAME}"
@@ -22,12 +22,12 @@ objects:
 - kind: Service
   apiVersion: v1
   metadata:
-    name: "${NAME}"
+    name: "${NAME}-service"
     annotations:
       description: Exposes and load balances the application pods
   spec:
     ports:
-    - name: web
+    - name: app
       port: "${{SERVER_PORT}}"
       targetPort: "${{SERVER_PORT}}"
     selector:
@@ -40,38 +40,14 @@ objects:
     host: "${APPLICATION_DOMAIN}"
     to:
       kind: Service
-      name: "${NAME}"
+      name: "${NAME}-service"
 - kind: ImageStream
   apiVersion: image.openshift.io/v1
   metadata:
-    labels:
-      app: "${NAME}"
-      app.kubernetes.io/component: "${NAME}"
-      app.kubernetes.io/instance: "${NAME}"
-    name: "${NAME}"
-    namespace: "${PROJECT}"
+    name: "${NAME}-is"
     annotations:
       description: Keeps track of changes in the application image
   spec:
-    tags:
-    - annotations:
-        openshift.io/imported-from: registry.access.redhat.com/ubi9/nodejs-16-minimal
-      from:
-        kind: DockerImage
-        name: registry.access.redhat.com/ubi9/nodejs-16-minimal
-  spec:
-    lookupPolicy:
-      local: false
-- kind: ImageStream
-  apiVersion: image.openshift.io/v1
-  metadata:
-    labels:
-      app: "${NAME}"
-      app.kubernetes.io/component: "${NAME}"
-      app.kubernetes.io/instance: "${NAME}"
-    name: nodejs-16-minimal
-    namespace: "${PROJECT}"
-  spec:
     lookupPolicy:
       local: false
     tags:
@@ -80,18 +56,18 @@ objects:
       from:
         kind: DockerImage
         name: registry.access.redhat.com/ubi9/nodejs-16-minimal
-      name: latest
-      referencePolicy:
-        type: Source
 - kind: BuildConfig
   apiVersion: build.openshift.io/v1
   metadata:
-    name: "${NAME}-build-config"
-    namespace: "${PROJECT}"
+    name: "${NAME}"
     annotations:
       description: Defines how to build the application
       template.alpha.openshift.io/wait-for-ready: 'true'
   spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: "${NAME}:latest"
     source:
       git:
         ref: "${SOURCE_REPOSITORY_REF}"
@@ -101,14 +77,8 @@ objects:
       dockerStrategy:
         from:
           kind: ImageStreamTag
-          namespace: "${PROJECT}"
           name: nodejs-16-minimal:latest
       type: Docker
-    output:
-      to:
-        kind: ImageStreamTag
-        namespace: "${PROJECT}"
-        name: "${NAME}:latest"
     triggers:
     - type: ImageChange
     - type: ConfigChange
@@ -123,7 +93,7 @@ objects:
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
-    name: "${NAME}-deployment-config"
+    name: "${NAME}"
     annotations:
       description: Defines how to deploy the application server
       template.alpha.openshift.io/wait-for-ready: 'true'
@@ -138,7 +108,7 @@ objects:
         - "${NAME}"
         from:
           kind: ImageStreamTag
-          namespace: "${PROJECT}"
+          namespace: "${NAMESPACE}"
           name: "${NAME}:latest"
     - type: ConfigChange
     replicas: 1
@@ -183,33 +153,34 @@ objects:
 parameters:
 - name: NAME
   displayName: Name
-  description: The name assigned to all of the frontend objects defined in this template.
+  description: The name assigned to all of the objects defined in this template.
   required: true
   value: hello-world
 - name: NAMESPACE
   displayName: Namespace
-  description: The OpenShift Namespace where the ImageStream resides.
+  description: The OpenShift Namespace where the project resides.
   required: true
-  value: openshift
-- name: PROJECT
-  displayName: Project
-  description: The OpenShift Prooject (Namespace) where the objects resides.
-  required: true
-- name: MEMORY_LIMIT
-  displayName: Memory Limit
-  description: Maximum amount of memory the container can use.
-  required: true
-  value: 256Mi
+  value: default
 - name: SOURCE_REPOSITORY_URL
   displayName: Git Repository URL
   description: The URL of the repository with your application source code.
   required: true
   value: https://github.com/jeremycaine/hello-world
+- name: SUPPORT_REPOSITORY_URL
+  displayName: Git Repository URL
+  description: The URL of the repository where to get support.
+  required: true
+  value: https://github.com/jeremycaine
 - name: SOURCE_REPOSITORY_REF
   displayName: Git Reference
   description: Set this to a branch name, tag or other ref of your repository if you
     are not using the default branch.
   value: main
+- name: SERVER_PORT
+  displayName: Server Listen Port
+  description: 'Port the Server will listen on '
+  required: true
+  value: '3000'
 - name: APPLICATION_DOMAIN
   displayName: Application Hostname
   description: The exposed hostname that will route to the Node.js service, if left
@@ -226,8 +197,3 @@ parameters:
   description: A secret string used to configure the Generic webhook.
   generate: expression
   from: "[a-zA-Z0-9]{40}"
-- name: SERVER_PORT
-  displayName: Server Listen Port
-  description: 'Port the Server will listen on '
-  required: true
-  value: '3000'

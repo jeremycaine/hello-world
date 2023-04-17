@@ -21,7 +21,9 @@ function shutdown(signal) {
   process.exit();
 }
 
+
+// https://thomashunter.name/posts/2021-03-08-the-death-of-a-nodejs-process
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
 
-// https://thomashunter.name/posts/2021-03-08-the-death-of-a-nodejs-process
+module.exports = server;

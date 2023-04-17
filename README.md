@@ -1,137 +1,124 @@
-# Hello World
-A simple Hello World! NodeJS app built for the OpenShift platform.
+# OpenShift
+Walkthrough of building the app from source and deploying to an OpenShift cluster using the `oc new-app` process.
 
-## 1. Local Development
+## 1. OpenShift Cluster
+For OpenShift Local
 ```
-git clone https://github.com/jeremycaine/hello-world
-cd hello-world
-npm install
-npm run start
-curl http://127.0.0.1:3000/
+crc start
+crc start -c 8 -m 16384
 ```
 
-## 2. Local Podman
-Ensure podman is running, `init` not required once podman installed and VM created.
-```
-podman machine init
-podman machine start
-```
-
-If you have not started the podman machine and try to do podman actions you get this error message:
-```
-Error: failed to connect: dial tcp [::1]:65202: connect: connection refused
-```
-
-## 3. Dockerfile
-The Dockerfile uses best practices for designing a universal application image [link](https://developer.ibm.com/learningpaths/universal-application-image/). This builds efficient, high-quality images that run well in both Kubernetes and Red Hat OpenShift.
-
-## 4. Build and Run Image Locally
-Build and Run on a Macbook M1 - arm64 architecture. The podman build picks up on the compute it is running on, so no need to add an `--arch` flag for `arm64`
-```
-podman build -t hello-world:arm64 .
-podman images
-podman run --name hello -p 3001:3000 localhost/hello-world:arm64 &
-```
-This shows how the port the app listens on (3000) is mapped ot the port to serve the container on (3001). Access the app via `localhost:3001`
-
-Cleanup actions
-```
-# in case you need to re-run
-podman rm hello
-
-# stop containers
-podman stop --all
-
-# remove image for clean re-built
-podman rmi hello-word
-```
-
-## 3. OpenShift Local 
-Set up OpenShift Local (was CRC).
-
-## 4. Push image into OpenShift
-Log in to OpenShift as admin
+Login to OpenShift Cluster e.g. as `developer` for OpenShift Local
 ```
 eval $(crc oc-env)
+oc login -u developer https://api.crc.testing:6443
 ```
 
-Log podman into the OpenShift Local registry.
-```
-podman login -u kubeadmin -p $(oc whoami -t) default-route-openshift-image-registry.apps-crc.testing --tls-verify=false
+## 2. Create the Deployment
+The simple `hello-world` app in [repo](https://github.com/jeremycaine/hello-world) is a web app lisenting on port 3000 
 
-oc login -u developer ..
+Source code set release = 1
+```
+# Create a new project
+git push ...
 oc new-project hello
-podman push hello-world:arm64 default-route-openshift-image-registry.apps-crc.testing/hello/hello-world:latest --tls-verify=false
-oc get is
 
-# allows the imagestream to be the source of images without having to provide the full URL to the internal registry.
-oc set image-lookup hello-world
-
-oc new-app --image-stream=hello-world
+oc new-app .
+oc expose service/hello-world
+oc status
+curl http://hello-world-hello.apps-crc.testing
+> Hello World ! (release 1)
 ```
-with output
+
+Now update the code for release 2 with the signal handling and graceful shutdown
 ```
---> Found image 0527aae (7 minutes old) in image stream "hello/hello-world" under tag "latest" for "hello-world"
+git push ....
+oc start-build hello-word
+curl http://hello-world-hello.apps-crc.testing
+> Hello World ! (release 2)
 
-    Node.js 16 Micro
-    ----------------
-    Node.js 16 available as container is a base platform for running various Node.js 16 applications and frameworks. Node.js is a platform built on Chrome's JavaScript runtime for easily building fast, scalable network applications. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices.
+```
+tail the logs
+```
+oc logs -f deployment/hello-world
+...
+> hello-world@1.0.0 start
+> node server.js
 
-    Tags: builder, nodejs, nodejs16
+Server release 2 is running on http://localhost:3000
+called hello - release 2
+```
 
-
+now stop the deployment - console Deployments > scale pod to 0
+```
+SIGTERM signal received
+HTTP server closed
+hello-world app release 2 shutting down
+npm timing command:run Completed in 485053ms
+npm timing npm Completed in 485114ms
+npm info ok
+```
+## Security
+Withouth the next security set up you get the error message when `oc new-app`:
+```
+...
 --> Creating resources ...
 Warning: would violate PodSecurity "restricted:v1.24": allowPrivilegeEscalation != false (container "hello-world" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "hello-world" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "hello-world" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "hello-world" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
     deployment.apps "hello-world" created
-    service "hello-world" created
+...
+```
+
+as kubeadmin
+```
+# create a SecurityContextConstraints
+oc create -f openshift/developer-scc.yaml
+
+# create a service account
+oc create sa developer-sa
+
+# apply RBAC
+oc create -f openshift/developer-rbac.yaml
+```
+
+as developer
+```
+oc new-project hello2
+oc new-app --file=openshift/hello-world-template.yaml --param=NAME=hello --param=PROJECT=hello2
+```
+
+W0414 18:10:07.928204    3532 shim_kubectl.go:58] Using non-groupfied API resources is deprecated and will be removed in a future release, update apiVersion to "template.openshift.io/v1" for your resource
+--> Deploying template "hello3/${NAME}" for "openshift/hello-world-template.yaml" to project hello3
+
+     Node.js
+     ---------
+     Simple Hello World app in NodeJS
+
+     The following service(s) have been created in your project: hello3.
+
+
+     * With parameters:
+        * Name=hello3
+        * Memory Limit=256Mi
+        * Git Repository URL=https://github.com/jeremycaine/hello-world.git
+        * Git Reference=
+        * Context Directory=
+        * Application Hostname=
+        * GitHub Webhook Secret=jIW1lrFutHWSOwhRirBEM3QxKakaLYEMwmXt7ClY # generated
+        * Generic Webhook Secret=lGD80IRbtgqfy4vjuWPruEHJhgxS0IcmO4HyO5td # generated
+        * Server Listen Port=3000
+
+W0414 18:10:07.985680    3532 newapp.go:1335] Unable to check for circular build input: Unable to check for circular build input/outputs: imagestreams.image.openshift.io "nodejs-16-minimal" not found
+--> Creating resources ...
+    service "hello3" created
+    route.route.openshift.io "hello3-route" created
+    imagestream.image.openshift.io "hello3" created
+    buildconfig.build.openshift.io "hello3" created
+    deploymentconfig.apps.openshift.io "hello3" created
 --> Success
-    Application is not exposed. You can expose services to the outside world by executing one or more of the commands below:
-     'oc expose service/hello-world'
+    Access your application via route 'hello3-route-hello3.apps-crc.testing'
+    Build scheduled, use 'oc logs -f buildconfig/hello3' to track its progress.
     Run 'oc status' to view your app.
-```
 
-```
-oc expose service/hello-world
-oc status
-curl http://hello-world-hello.apps-crc.testing/
-```
+# Templates
 
-
-## 4. Deploy in OPenshift
-
-Log in to OpenShift on cloud and two deployment options
-```
-oc login --token...
-oc new-project hello
-
-# build from source
-oc new-app https://github.com/jeremycaine/hello-world
-
-# build from image
-oc new-app --image=quay.io/jeremycaine/hello-world:amd64
-
-oc expose service/hello-world
-
-# get URL of deployment from
-oc status
-```
-
-## x. Quay and Red Hat OpenShift IBM Cloud
-
-### x.1 Build and Push to Quay Registry
-Build to the amd64 architecture for deployment in the cloud.
-```
-podman build --arch=amd64 -t hello-world:amd64 .
-podman images
-podman login quay.io
-podman push hello-world:amd64 quay.io/jeremycaine/hello-world:amd64
-```
-
-## References
-
-https://developer.ibm.com/tutorials/running-x86-64-containers-mac-silicon-m1/ 
-
-https://podman-desktop.io/docs/troubleshooting#unable-to-set-custom-binary-path-for-podman-on-macos 
-
-https://developer.ibm.com/learningpaths/universal-application-image/design-universal-image/ 
-
+oc get -o yaml all > hello.yaml
