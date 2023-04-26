@@ -1,5 +1,35 @@
-# OpenShift
-Walkthrough of building the app from source and deploying to an OpenShift cluster using the `oc new-app` process.
+# Hello World on OpenShift
+Application container images built and deployed using OpenShift practices are fully Kubernetes compliant and can be deployed to any k8s cluster. This walkthrough demonstrates some of those foundational practices that result in secure and well managed deployments fit for operating in an enterprise environment.
+
+1. build and run app locally
+2. OpenShift Local
+3. local podman build and run
+4. vanilla deployment
+5. update code for better shutdown handling
+6. add security, deploy without template
+7. wrapping all together into template
+8. push to quay registry
+9. deploy to cloud hosted openshift cluster
+10. deploy quay image to local kind/minikube
+
+
+## 1. Build and Run a Local Hello World application
+The main branch of the code is for the final complete configuration we want to achieve in OpenShift. To introduce the concepts and foundations within OpenShift we are going to start with some simpler source and build files. 
+
+We start by cloning the repo and using the files needed in this first step. In a terminal window:
+```
+git clone https://github.com/jeremycaine/hello-world
+cd hello-world
+cp ./src/server-rel-1.js ./server.js
+npm install
+npm run start
+```
+From another terminal check the application is running and observer the log output in the original terminal window.
+```
+
+```
+
+
 
 ## 1. OpenShift Cluster
 For OpenShift Local
@@ -82,8 +112,8 @@ oc create -f openshift/developer-rbac.yaml
 
 as developer
 ```
-oc new-project hello2
-oc new-app --file=openshift/hello-world-template.yaml --param=NAME=hello --param=PROJECT=hello2
+oc new-project helloN
+oc new-app --file=openshift/hello-world-template.yaml --param=NAME=hello-world-2 --param=PROJECT=$(oc project -q)
 ```
 
 W0414 18:10:07.928204    3532 shim_kubectl.go:58] Using non-groupfied API resources is deprecated and will be removed in a future release, update apiVersion to "template.openshift.io/v1" for your resource

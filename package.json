@@ -4,7 +4,6 @@
   "description": "simple Hello World in NodeJS",
   "main": "server.js",
   "scripts": {
-    "test2": "SERVER_PORT=3000 mocha --timeout 5000 test/*_test.js",
     "test": "mocha --timeout 5000",
     "start": "node server.js"
   },
