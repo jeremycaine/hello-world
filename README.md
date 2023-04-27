@@ -1,7 +1,6 @@
 # Hello World on OpenShift
 Application container images built and deployed using OpenShift practices are fully Kubernetes compliant and can be deployed to any k8s cluster. This walkthrough demonstrates some of those foundational practices that result in secure and well managed deployments fit for operating in an enterprise environment.
 
-1. build and run app locally
 2. OpenShift Local
 3. local podman build and run
 4. vanilla deployment
@@ -24,11 +23,70 @@ cp ./src/server-rel-1.js ./server.js
 npm install
 npm run start
 ```
-From another terminal check the application is running and observer the log output in the original terminal window.
+From another terminal check the application is running 
+```
+curl http://localhost:3000
+```
+and observe the log output in the original terminal window
+```
+...
+Server release 1 is running on http://localhost:3000
+called hello - release 1
+...
 ```
 
+## 2. Install OpenShift Local
+Red Hat OpenShift Local was previously known as Code Ready Containers, and its command line functions are `crc`. Go to the [OpenShift Local site](https://developers.redhat.com/products/openshift-local/overview) and click through to "Install OpenShift of your laptop" (via your Red Hat account login). Also, the original [CRC Site](https://crc.dev) redirects there. My installation is onto a Macbook Pro M1 (download the MacOS `aarch64` installer package).
+
+On MacOS use the installer package to install OpenShift Local. At that stage:
+```
+crc version
+
+    CRC version: 2.17.0+44e15711
+    OpenShift version: 4.12.9
+    Podman version: 4.4.1
 ```
 
+Next,
+```
+crc setup
+```
+
+On Mac this process will download a native macOS hypervisor for the virtual machine that OpenShift will run in. At this point the OpenShift command line `oc` and Podman are not configured.
+
+Install and create an OpenShift cluster to run on your local machine. 
+```
+crc start
+```
+This creates a VM for OpenShift to run and completes the setup and configuration. Assuming your `pull-secret` file is in the same directory from where you ran `crc start` that part of the setup will be automatic. If not, you need to paste in the file contents when asked; this is a one-time task.
+
+The cluster is now up and running
+```
+Started the OpenShift cluster.
+
+The server is accessible via web console at:
+  https://console-openshift-console.apps-crc.testing
+
+Log in as administrator:
+  Username: kubeadmin
+  Password: kEg2Y-Nbeah-44LyK-Bp8be
+
+Log in as user:
+  Username: developer
+  Password: developer
+
+Use the 'oc' command line interface:
+  $ eval $(crc oc-env)
+  $ oc login -u developer https://api.crc.testing:6443
+```
+When you execute `eval $(crc oc-env)` then `oc` and `podman` are setup. In the `~/.crc/bin` a directory `oc` is created with symbolic links to the executables, and `~/.crc/bin` is added to the PATH.
+
+## 3. Local Podman Build and Run
+We are going to start with a pretty standard Dockerfile and show how that is treated in the OpenShift world. First we get that simple Dockerfile and build the image.
+```
+cp ./src/Dockerfile.simple ./Dockerfile
+
+```
 
 
 ## 1. OpenShift Cluster
