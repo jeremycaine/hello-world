@@ -1,0 +1,43 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: hello-5-2
+  annotations:
+    description: Exposes and load balances the application pods
+spec:
+  ports:
+  - name: 3000-tcp
+    protocol: TCP
+    port: 3000
+    targetPort: 3000
+  type: ClusterIP
+  selector:
+    deployment: hello-5-2
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: hello-5-2
+spec:
+  selector:
+    matchLabels:
+      deployment: hello-5-2
+  template:
+    metadata:
+      labels:
+        deployment: hello-5-2
+    spec:
+      containers:
+      - image: image-registry.openshift-image-registry.svc:5000/hello-5-2/hello-5-2:openshift
+        name: hello-5-2
+        ports:
+          - containerPort: 3000
+        securityContext:
+          runAsUser: 1234
+          runAsGroup: 5678
+      serviceAccountName: developer-sa
+      securityContext:
+        fsGroup: 5555
+        supplementalGroups: [5777, 5888]
+

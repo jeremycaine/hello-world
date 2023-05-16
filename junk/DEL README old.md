@@ -129,9 +129,6 @@ podman push hello-world:amd64 quay.io/jeremycaine/hello-world:amd64
 
 ## References
 
-https://developer.ibm.com/tutorials/running-x86-64-containers-mac-silicon-m1/ 
-
 https://podman-desktop.io/docs/troubleshooting#unable-to-set-custom-binary-path-for-podman-on-macos 
 
-https://developer.ibm.com/learningpaths/universal-application-image/design-universal-image/ 
 
