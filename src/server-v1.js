@@ -18,4 +18,4 @@ const server = app.listen(PORT, () => {
   console.log(`Server version is running on http://localhost:${PORT}`);
 });
 
-module.exports = server;
+module.exports = app;
