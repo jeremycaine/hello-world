@@ -1,4 +1,6 @@
 # 5. Configure Pod Security
+Adding OpenShift pod security to harden a deployment for real-world use.
+
 By design and by default the OpenShift implementation of Kubernetes restricts the privileges an application might expect it has e.g. access the file system. Security context constraints (SCC) are OpenShift resources that restricts a pod to use a group of resources. An introduction and tutorial to understand SCC is [here](https://developer.ibm.com/learningpaths/secure-context-constraints-openshift/scc-tutorial/).
 
 Even with the security minded Dockerfile the `oc new-app` deployment of the application triggers this Warning

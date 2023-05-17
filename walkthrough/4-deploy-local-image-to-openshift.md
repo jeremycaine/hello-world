@@ -1,4 +1,6 @@
 # 4. Deploy Local Image to OpenShift Local
+Deployment and run of images in OpenShift Local and description of OpenShift optimised Dockerfile.
+
 Start the OpenShift Cluster with `crc start` and confirm the Podman target with `podman system connnection list`.
 
 Login to OpenShift Cluster e.g. as `developer` for OpenShift Local and setup a new project (namespace).

@@ -1,5 +1,5 @@
 ## 3. OpenShift Local
-Red Hat OpenShift Local was previously known as Code Ready Containers, and its command line functions are `crc`. 
+Introduction to Red Hat OpenShift Local was previously known as Code Ready Containers and configuration with `podman`. Its command line functions are `crc`. 
 
 ### 3.1 Installation
 Go to the [OpenShift Local site](https://developers.redhat.com/products/openshift-local/overview) and click through to "Install OpenShift of your laptop" (via your Red Hat account login). Also, the original [CRC Site](https://crc.dev) redirects there. My installation is onto a Macbook Pro M1 (download the MacOS `aarch64` installer package).

@@ -1,9 +1,5 @@
 # 2. Local Podman Build and Run
-- podman setup
-then build and run scenarios
-- podman build, podman run (need VM setup)
-- podman build, openshift cluster un
-- openshift build and run
+The installation and configuration of `podman` and how to build and run a container image.
 
 ## 2.1 Podman Install
 Install podman

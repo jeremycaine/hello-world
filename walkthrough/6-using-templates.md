@@ -1,5 +1,7 @@
 # 6. Using Templates
-A simple way to get started with an all encompassing build and deployment for local development is using OpenShift Template. Other ways of building and deploying applications include using CI/CD pipeline technology e.g. Argo, Jenkins, Ansible etc.
+OpenShift Template are a starting point for creating all encompassing build and deployment of OpenShift applications.
+
+A simple way to get started with an all encompassing build and deployment for local development is using OpenShift Templates. Other ways of building and deploying applications include using CI/CD pipeline technology e.g. Argo, Jenkins, Ansible etc.
 
 ## 6.1. Push to Github
 The template will build from the Github repository, therefore we need to commit all the files to a repo.
@@ -89,9 +91,6 @@ Creating a new application from template shows these messages:
     Build scheduled, use 'oc logs -f buildconfig/hello-world-build' to track its progress.
     Run 'oc status' to view your app.
 ```
-
-`BuildConfig` triggers a container to start up and build the app image to deploy. When this build is successful it creates a `DeploymentConfig` that deploys the app and waits for subsequent triggers from changes to source in GitHub.
-
 After a few minutes the application is up and running, `oc status` gives
 ```
 In project hello-t on server https://api.crc.testing:6443

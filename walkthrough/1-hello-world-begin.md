@@ -1,5 +1,5 @@
 # 1. Build and Run a Local Hello World application
-To introduce the concepts and foundations within OpenShift we are going to start with some simpler source and build files. 
+To introduce the concepts and foundations within OpenShift we are going to start with some simple source and tests of a NodeJS application.
 
 ## 1.1 Simple Application
 Start by cloning the repo and using the files needed in this first step. In a terminal window:
