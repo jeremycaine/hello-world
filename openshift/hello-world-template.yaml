@@ -7,22 +7,16 @@ metadata:
     description: Simple Hello World app in NodeJS
     tags: nodejs
     iconClass: icon-nodejs
-    openshift.io/long-description: This template defines resources needed to develop
-      a basic Hello World NodeJS application, including a build configuration and
-      application deployment configuration.  It does not include a database.
+    openshift.io/long-description: This template defines resources needed to develop a basic Hello World NodeJS application, including a build configuration and application deployment configuration. It does not include a database.
     openshift.io/provider-display-name: jeremycaine
     openshift.io/documentation-url: https://github.com/jeremycaine/hello-world
     openshift.io/support-url: https://github.com/jeremycaine
     template.openshift.io/bindable: 'false'
-message: "The following service(s) have been created in your project: ${PROJECT}.\n\n"
-labels:
-  template: hello-world-template
-  app: "${NAME}"
 objects:
 - kind: Service
   apiVersion: v1
   metadata:
-    name: "${NAME}"
+    name: "${NAME}-service"
     annotations:
       description: Exposes and load balances the application pods
   spec:
@@ -40,7 +34,7 @@ objects:
     host: "${APPLICATION_DOMAIN}"
     to:
       kind: Service
-      name: "${NAME}"
+      name: "${NAME}-service"
 - kind: ImageStream
   apiVersion: image.openshift.io/v1
   metadata:
@@ -54,14 +48,11 @@ objects:
       description: Keeps track of changes in the application image
   spec:
     tags:
-    - annotations:
-        openshift.io/imported-from: registry.access.redhat.com/ubi9/nodejs-16-minimal
-      from:
-        kind: DockerImage
-        name: registry.access.redhat.com/ubi9/nodejs-16-minimal
-  spec:
-    lookupPolicy:
-      local: false
+      - annotations:
+          openshift.io/imported-from: registry.access.redhat.com/ubi9/nodejs-16-minimal
+        from:
+          kind: DockerImage
+          name: registry.access.redhat.com/ubi9/nodejs-16-minimal
 - kind: ImageStream
   apiVersion: image.openshift.io/v1
   metadata:
@@ -75,14 +66,14 @@ objects:
     lookupPolicy:
       local: false
     tags:
-    - annotations:
-        openshift.io/imported-from: registry.access.redhat.com/ubi9/nodejs-16-minimal
-      from:
-        kind: DockerImage
-        name: registry.access.redhat.com/ubi9/nodejs-16-minimal
-      name: latest
-      referencePolicy:
-        type: Source
+      - annotations:
+          openshift.io/imported-from: registry.access.redhat.com/ubi9/nodejs-16-minimal
+        from:
+          kind: DockerImage
+          name: registry.access.redhat.com/ubi9/nodejs-16-minimal
+        name: latest
+        referencePolicy:
+          type: Source
 - kind: BuildConfig
   apiVersion: build.openshift.io/v1
   metadata:
@@ -110,18 +101,18 @@ objects:
         namespace: "${PROJECT}"
         name: "${NAME}:latest"
     triggers:
-    - type: ImageChange
-    - type: ConfigChange
-    - type: GitHub
-      github:
-        secret: "${GITHUB_WEBHOOK_SECRET}"
-    - type: Generic
-      generic:
-        secret: "${GENERIC_WEBHOOK_SECRET}"
+      - type: ImageChange
+      - type: ConfigChange
+      - type: GitHub
+        github:
+          secret: "${GITHUB_WEBHOOK_SECRET}"
+      - type: Generic
+        generic:
+          secret: "${GENERIC_WEBHOOK_SECRET}"
     postCommit:
-      script: npm test
+      script: "npm run test"
 - kind: DeploymentConfig
-  apiVersion: v1
+  apiVersion: apps.openshift.io/v1
   metadata:
     name: "${NAME}-deployment"
     annotations:
@@ -131,16 +122,16 @@ objects:
     strategy:
       type: Rolling
     triggers:
-    - type: ImageChange
-      imageChangeParams:
-        automatic: true
-        containerNames:
-        - "${NAME}"
-        from:
-          kind: ImageStreamTag
-          namespace: "${PROJECT}"
-          name: "${NAME}:latest"
-    - type: ConfigChange
+      - type: ImageChange
+        imageChangeParams:
+          automatic: true
+          containerNames:
+            - "${NAME}"
+          from:
+            kind: ImageStreamTag
+            namespace: "${PROJECT}"
+            name: "${NAME}:latest"
+      - type: ConfigChange
     replicas: 1
     selector:
       name: "${NAME}"
@@ -151,35 +142,33 @@ objects:
           name: "${NAME}"
       spec:
         containers:
-        - name: "${NAME}"
-          image: " "
-          securityContext:
-            runAsUser: 1234
-            runAsGroup: 5678
-          ports:
-          - containerPort: "${{SERVER_PORT}}"
-          readinessProbe:
-            timeoutSeconds: 3
-            initialDelaySeconds: 3
-            httpGet:
-              path: "/"
-              port: "${{SERVER_PORT}}"
-          livenessProbe:
-            timeoutSeconds: 3
-            initialDelaySeconds: 30
-            httpGet:
-              path: "/"
-              port: "${{SERVER_PORT}}"
-          resources:
-            limits:
-              memory: "${MEMORY_LIMIT}"
-          serviceAccountName: developer-sa
-          serviceAccount: developer-sa
-          securityContext:
-            supplementalGroups:
-              - 5777
-              - 5888
-            fsGroup: 5555
+          - name: "${NAME}"
+            image: "${NAME}:latest"
+            securityContext:
+              runAsUser: null
+              runAsGroup: null
+              supplementalGroups:
+                - null
+                - null
+              fsGroup: null
+            ports:
+              - containerPort: "${{SERVER_PORT}}"
+            readinessProbe:
+              timeoutSeconds: 3
+              initialDelaySeconds: 3
+              httpGet:
+                path: "/"
+                port: "${{SERVER_PORT}}"
+            livenessProbe:
+              timeoutSeconds: 3
+              initialDelaySeconds: 30
+              httpGet:
+                path: "/"
+                port: "${{SERVER_PORT}}"
+            resources:
+              limits:
+                memory: "${MEMORY_LIMIT}"
+            serviceAccountName: "${SERVICE_ACCOUNT_NAME}"
 parameters:
 - name: NAME
   displayName: Name
@@ -188,8 +177,13 @@ parameters:
   value: hello-world
 - name: PROJECT
   displayName: Project
-  description: The OpenShift Project (Namespace) where the objects resides.
+  description: The OpenShift Project (Namespace) where the objects reside.
   required: true
+- name: SERVICE_ACCOUNT_NAME
+  displayName: Service Account Name
+  description: The service account the deployment will run under.
+  required: true
+  value: developer-sa
 - name: MEMORY_LIMIT
   displayName: Memory Limit
   description: Maximum amount of memory the container can use.
@@ -202,18 +196,15 @@ parameters:
   value: https://github.com/jeremycaine/hello-world
 - name: SOURCE_REPOSITORY_REF
   displayName: Git Reference
-  description: Set this to a branch name, tag or other ref of your repository if you
-    are not using the default branch.
+  description: Set this to a branch name, tag, or other ref of your repository if you are not using the default branch.
   value: main
 - name: APPLICATION_DOMAIN
   displayName: Application Hostname
-  description: The exposed hostname that will route to the Node.js service, if left
-    blank a value will be defaulted.
+  description: The exposed hostname that will route to the Node.js service. If left blank, a value will be defaulted.
   value: ''
 - name: GITHUB_WEBHOOK_SECRET
   displayName: GitHub Webhook Secret
-  description: Github trigger secret.  A difficult to guess string encoded as part
-    of the webhook URL.  Not encrypted.
+  description: Github trigger secret. A difficult-to-guess string encoded as part of the webhook URL. Not encrypted.
   generate: expression
   from: "[a-zA-Z0-9]{40}"
 - name: GENERIC_WEBHOOK_SECRET
@@ -223,6 +214,6 @@ parameters:
   from: "[a-zA-Z0-9]{40}"
 - name: SERVER_PORT
   displayName: Server Listen Port
-  description: 'Port the Server will listen on '
+  description: Port the Server will listen on.
   required: true
   value: '3000'
