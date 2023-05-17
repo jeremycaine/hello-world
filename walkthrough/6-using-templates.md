@@ -56,6 +56,55 @@ oc login -u developer -p ...
 oc new-app -f openshift/hello-world-template.yaml -p PROJECT=hello-t
 ```
 
+## 6.3 Understanding the Template Build and Deploy
+Creating a new application from template shows these messages:
+```
+--> Deploying template "hello-t/hello-world-template" for "openshift/hello-world-template.yaml" to project hello-t
+
+     Node.js
+     ---------
+     Simple Hello World app in NodeJS
+
+     * With parameters:
+        * Name=hello-world
+        * Project=hello-t
+        * Service Account Name=developer-sa
+        * Memory Limit=256Mi
+        * Git Repository URL=https://github.com/jeremycaine/hello-world
+        * Git Reference=main
+        * Application Hostname=
+        * GitHub Webhook Secret=S1HLODYUX0b86WTtIllGJIN8B1cT34kDO2wpBroG # generated
+        * Generic Webhook Secret=MjsK1QyfAwqEiJrnNLI1dJ7VhpfHRwnKrh5iXlby # generated
+        * Server Listen Port=3000
+
+--> Creating resources ...
+    service "hello-world-service" created
+    route.route.openshift.io "hello-world-route" created
+    imagestream.image.openshift.io "hello-world" created
+    imagestream.image.openshift.io "nodejs-16-minimal" created
+    buildconfig.build.openshift.io "hello-world-build" created
+    deploymentconfig.apps.openshift.io "hello-world-deployment" created
+--> Success
+    Access your application via route 'hello-world-route-hello-t.apps-crc.testing'
+    Build scheduled, use 'oc logs -f buildconfig/hello-world-build' to track its progress.
+    Run 'oc status' to view your app.
+```
+
+`BuildConfig` triggers a container to start up and build the app image to deploy. When this build is successful it creates a `DeploymentConfig` that deploys the app and waits for subsequent triggers from changes to source in GitHub.
+
+After a few minutes the application is up and running, `oc status` gives
+```
+In project hello-t on server https://api.crc.testing:6443
+
+http://hello-world-route-hello-t.apps-crc.testing (svc/hello-world-service)
+  dc/hello-world-deployment deploys istag/hello-world:latest <-
+    bc/hello-world-build docker builds https://github.com/jeremycaine/hello-world#main on istag/nodejs-16-minimal:latest
+    deployment #1 deployed 3 minutes ago - 1 pod
+
+View details with 'oc describe <resource>/<name>' or list resources with 'oc get all'.
+```
+Then you can access the application with `curl http://hello-world-route-hello-t.apps-crc.testing`
+
 | Previous        | Next          |
 | ------------- | -------------|
 |[5. Configure Pod Security](5-configure-pod-security.md) | [Back to README](../README.md)|

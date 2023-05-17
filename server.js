@@ -17,8 +17,10 @@ function handleShutdown(signal) {
 }
 
 app.get("/", (req, res) => {
-  console.log(`hello-world called (${version})`);
-  res.send(`Hello World ! (version ${version})\n`);
+//  console.log(`hello-world called (${version})`);
+//  res.send(`Hello World ! (version ${version})\n`);
+  console.log(`a DIFFERENT hello-world called (${version})`);
+  res.send(`Hello ANOTHER World ! (version ${version})\n`);
 });
 
 const server = app.listen(PORT, () => {
