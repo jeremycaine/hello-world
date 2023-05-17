@@ -24,11 +24,36 @@ An OpenShift Template is a set of directives to build various OpenShift and Kube
 
 The example template file is [openshift/hello-world-template.yaml](../openshift/hello-world-template.yaml).
 
+First, setup project as the developer
+```
+oc login -u developer -p ...
+oc new-project hello-t
+```
+
+Next setup the project and its security context. As `kubeadmin` create the SCC for the developer user named `scc-developer`
+```
+oc login -u kubeadmin -p ...
+
+# ensure kubeadmin is in the correct project
+oc project hello-t
+
+# create a SecurityContextConstraint
+oc create -f openshift/developer-scc.yaml
+
+# create a service account that the developer will be part of
+oc create sa developer-sa
+
+# create a role to use the SCC and bind that role to the service account
+# apply RBAC
+oc create -f openshift/developer-rbac.yaml
+oc logout
+```
+
 Next, as developer user create a new project and trigger the build and deployment using the template which requires the parameter PROJECT (namespace) to be specified:
 ```
-oc new-project hello-6-2
-oc new-app -f openshift/hello-world-template.yaml -p PROJECT=hello-6-2
-oc new-app -f openshift/template2.yaml -p PROJECT=hello-6-2
+oc login -u developer -p ...
+oc new-app -f openshift/hello-world-template.yaml -p PROJECT=hello-t
+oc new-app -f openshift/template2.yaml -p PROJECT=hello-t
 ```
 
 

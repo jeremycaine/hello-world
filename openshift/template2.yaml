@@ -145,12 +145,12 @@ objects:
           - name: "${NAME}"
             image: "${NAME}:latest"
             securityContext:
-              runAsUser: 1234
-              runAsGroup: 5678
+              runAsUser: {}
+              runAsGroup: {}
               supplementalGroups:
-                - 5777
-                - 5888
-              fsGroup: 5555
+                - {}
+                - {}
+              fsGroup: {}
             ports:
               - containerPort: "${{SERVER_PORT}}"
             readinessProbe:
