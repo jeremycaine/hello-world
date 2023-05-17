@@ -4,7 +4,7 @@
   "description": "simple Hello World in NodeJS",
   "main": "server.js",
   "scripts": {
-    "test": "mocha --timeout 5000",
+    "test": "mocha tests --timeout 5000 --exit",
     "start": "node server.js"
   },
   "repository": {

@@ -28,6 +28,7 @@ Next, as developer user create a new project and trigger the build and deploymen
 ```
 oc new-project hello-6-2
 oc new-app -f openshift/hello-world-template.yaml -p PROJECT=hello-6-2
+oc new-app -f openshift/template2.yaml -p PROJECT=hello-6-2
 ```
 
 
