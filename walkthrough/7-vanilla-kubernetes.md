@@ -29,6 +29,8 @@ podman push localhost/hello-world:openshift quay.io/jeremycaine/hello-world:open
 
 When you visit Quay.io you will see both images in your repo and one thing to note is the results of the automatic security vulnerability scans.
 
+![security scan image](/images/security-scan.png)
+
 
 ## 7.2. Install minikube
 [Minikube](https://minikube.sigs.k8s.io/docs/) is a simple way to get a local vanilla Kubernetes cluster up and running locally.

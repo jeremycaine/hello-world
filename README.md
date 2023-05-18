@@ -1,6 +1,5 @@
 # "Hello World" on OpenShift
-Application container images built and deployed using OpenShift practices are fully Kubernetes compliant and can be deployed to any k8s cluster. This walkthrough demonstrates some of those foundational practices that result in secure and well managed deployments fit for operating in an enterprise environment.
-
+Application container images built and deployed using OpenShift practices are fully Kubernetes compliant and can be deployed to any k8s cluster. This walkthrough demonstrates some of those OpenShift best practices that result in secure and well managed deployments fit for operating in an enterprise environment.
 
 ## Walkthrough
 ### [1. Build and Run a Local Hello World application](walkthrough/1-hello-world-begin.md)
@@ -24,6 +23,8 @@ OpenShift Template are a starting point for creating all encompassing build and 
 
 ### [7. Vanilla Kubernetes](walkthrough/7-vanilla-kubernetes.md)
 We can demonstrate that the OpenShift container build and execution are 100% Kubernetes specification compliant.
+
+![security scan image](/images/security-scan.png)
 
 ## References
 - [Red Hat OpenShift Local site](https://developers.redhat.com/products/openshift-local/overview)
