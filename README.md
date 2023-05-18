@@ -8,10 +8,10 @@ Application container images built and deployed using OpenShift practices are fu
 To introduce the concepts and foundations within OpenShift we are going to start with some simple source and tests of a NodeJS application. 
 
 ### [2. Local Podman Build and Run](walkthrough/2-local-podman-build-and-run.md)
-The installation and configuration of `podman` and how to build and run a container image.
+The installation and configuration of Podman and how to build and run a container image.
 
 ### [3. OpenShift Local](walkthrough/3-openshift-local.md)
-Introduction to Red Hat OpenShift Local was previously known as Code Ready Containers and configuration with `podman`. Its command line functions are `crc`.
+Introduction to Red Hat OpenShift Local was previously known as Code Ready Containers and configuration with Podman. 
 
 ### [4. Deploy Local Image to OpenShift Local](walkthrough/4-deploy-local-image-to-openshift.md)
 Deployment and run of images in OpenShift Local and description of OpenShift optimised Dockerfile.
