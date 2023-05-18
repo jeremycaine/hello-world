@@ -106,4 +106,4 @@ Then you can access the application with `curl http://hello-world-route-hello-t.
 
 | Previous        | Next          |
 | ------------- | -------------|
-|[5. Configure Pod Security](5-configure-pod-security.md) | [Back to README](../README.md)|
+|[5. Configure Pod Security](5-configure-pod-security.md) | [7. Vanilla Kubernetes](7-vanilla-kubernetes.md)|

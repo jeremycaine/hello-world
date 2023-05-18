@@ -22,8 +22,8 @@ Adding OpenShift pod security to harden a deployment for real-world use.
 ### [6. Using Templates](walkthrough/6-using-templates.md)
 OpenShift Template are a starting point for creating all encompassing build and deployment of OpenShift applications.
 
-
-
+### [7. Vanilla Kubernetes](walkthrough/7-vanilla-kubernetes.md)
+We can demonstrate that the OpenShift container build and execution are 100% Kubernetes specification compliant.
 
 
 
