@@ -25,7 +25,11 @@ OpenShift Template are a starting point for creating all encompassing build and 
 ### [7. Vanilla Kubernetes](walkthrough/7-vanilla-kubernetes.md)
 We can demonstrate that the OpenShift container build and execution are 100% Kubernetes specification compliant.
 
-
+## References
+- [Red Hat OpenShift Local site](https://developers.redhat.com/products/openshift-local/overview)
+- [Best practices for building images for Kubernetes and OpenShift](https://developer.ibm.com/learningpaths/universal-application-image/design-universal-image/)
+- [Pod Security](https://developer.ibm.com/learningpaths/secure-context-constraints-openshift/scc-tutorial/)
+- [Minikube](https://minikube.sigs.k8s.io/docs/)
 
 
 
